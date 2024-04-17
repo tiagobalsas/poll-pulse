@@ -18,7 +18,7 @@ model Poll {
   title    String
   createAt DateTime     @default(now())
   updateAt DateTime     @default(now())
-  Option   PollOption[]
+  options  PollOption[]
 }
 
 model PollOption {
