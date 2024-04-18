@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import  { FastifyInstance } from "fastify";
+import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 
@@ -17,6 +17,30 @@ export async function voteOnPoll(app: FastifyInstance) {
     const { pollOptionId } = voteOnPollBody.parse(request.body);
 
     let { sessionId } = request.cookies;
+
+    if (sessionId) {
+      const userPreviousVoteOnPoll = await prisma.vote.findUnique({
+        where: {
+          sessionId_pollId: {
+            sessionId,
+            pollId,
+          },
+        },
+      });
+
+      if (
+        userPreviousVoteOnPoll &&
+        userPreviousVoteOnPoll.pollOptionId !== pollOptionId
+      ) {
+        await prisma.vote.delete({
+          where: { id: userPreviousVoteOnPoll.id },
+        });
+      } else if (userPreviousVoteOnPoll) {
+        return reply
+          .status(400)
+          .send({ messege: "You alread voted on this poll." });
+      }
+    }
 
     if (!sessionId) {
       sessionId = randomUUID();
