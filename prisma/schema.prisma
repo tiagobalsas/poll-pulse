@@ -33,7 +33,6 @@ model PollOption {
 
 model Vote {
   id        String   @id @default(uuid())
-  title     String
   sessionId String
   createAt  DateTime @default(now())
 
