@@ -1,8 +1,9 @@
 import { FastifyInstance } from "fastify";
-import { record, z } from "zod";
+import { z } from "zod";
 
 import { prisma } from "../../lib/prisma";
 import { redis } from "../../lib/redis";
+import { title } from "process";
 
 export async function getPoll(app: FastifyInstance) {
   app.get("/polls/:pollId", async (request, reply) => {
@@ -33,6 +34,18 @@ export async function getPoll(app: FastifyInstance) {
       return obj;
     }, {} as Record<string, number>);
 
-    return reply.send({ poll });
+    return reply.send({
+      poll: {
+        id: poll.id,
+        title: poll.title,
+        options: poll.options.map((option) => {
+          return {
+            id: option.id,
+            title: option.title,
+            score: option.id in votes ? [option.id] : 0,
+          };
+        }),
+      },
+    });
   });
 }
