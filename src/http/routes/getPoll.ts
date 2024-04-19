@@ -42,7 +42,7 @@ export async function getPoll(app: FastifyInstance) {
           return {
             id: option.id,
             title: option.title,
-            score: option.id in votes ? [option.id] : 0,
+            score: option.id in votes ? votes[option.id] : 0,
           };
         }),
       },
