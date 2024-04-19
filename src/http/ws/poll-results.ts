@@ -6,7 +6,7 @@ export async function pollResults(app: FastifyInstance) {
     { websocket: true },
     (connection, request) => {
       connection.socket.on("message", (message: string) => {
-        
+        // falta criar a lógica
       });
     }
   );
