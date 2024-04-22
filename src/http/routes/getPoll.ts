@@ -1,9 +1,7 @@
-import { FastifyInstance } from "fastify";
 import { z } from "zod";
-
 import { prisma } from "../../lib/prisma";
+import { FastifyInstance } from "fastify";
 import { redis } from "../../lib/redis";
-import { title } from "process";
 
 export async function getPoll(app: FastifyInstance) {
   app.get("/polls/:pollId", async (request, reply) => {
@@ -14,8 +12,17 @@ export async function getPoll(app: FastifyInstance) {
     const { pollId } = getPollParams.parse(request.params);
 
     const poll = await prisma.poll.findUnique({
-      where: { id: pollId },
-      include: { options: { select: { id: true, title: true } } },
+      where: {
+        id: pollId,
+      },
+      include: {
+        options: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+      },
     });
 
     if (!poll) {

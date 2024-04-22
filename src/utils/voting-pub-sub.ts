@@ -4,12 +4,12 @@ type SubscriberType = (message: MessageType) => void;
 class VotingPubSub {
   private channels: Record<string, SubscriberType[]> = {};
 
-  subscribe(pollId: string, subscribe: SubscriberType) {
+  subscribe(pollId: string, subscriber: SubscriberType) {
     if (!this.channels[pollId]) {
       this.channels[pollId] = [];
     }
 
-    this.channels[pollId].push(subscribe);
+    this.channels[pollId].push(subscriber);
   }
 
   publish(pollId: string, message: MessageType) {
@@ -17,8 +17,8 @@ class VotingPubSub {
       return;
     }
 
-    for (const subscribe of this.channels[pollId]) {
-      subscribe(message);
+    for (const subscriber of this.channels[pollId]) {
+      subscriber(message);
     }
   }
 }
